@@ -9,7 +9,7 @@
     <version>1.0.1</version>
 
     <name>JKeyLockManager</name>
-    <url>http://code.google.com/p/jkeylockmanager</url>
+    <url>http://www.jkeylockmanager.de</url>
     <description>JKeyLockManager allows fine-grained locking with application specific keys.</description>
 
     <licenses>
@@ -138,7 +138,7 @@
         <developer>
             <name>Marc-Olaf Jaschke</name>
             <email>mojaschke@googlemail.com</email>
-            <organizationUrl>https://code.google.com/p/jkeylockmanager</organizationUrl>
+            <organizationUrl>http://www.jkeylockmanager.de</organizationUrl>
         </developer>
     </developers>
 
