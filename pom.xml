@@ -129,9 +129,9 @@
     </profiles>
 
     <scm>
-        <connection>scm:svn:http://foo.googlecode.com/svn/trunk/</connection>
-        <developerConnection>scm:svn:https://jkeylockmanager.googlecode.com/svn/jkeylockmanager/trunk/</developerConnection>
-        <url>https://jkeylockmanager.googlecode.com/svn/jkeylockmanager/trunk/</url>
+        <connection>scm:git:https://github.com/mojgh/JKeyLockManager.git</connection>
+        <developerConnection>scm:git:https://github.com/mojgh/JKeyLockManager.git</developerConnection>
+        <url>https://github.com/mojgh/JKeyLockManager.git</url>
     </scm>
 
     <developers>
