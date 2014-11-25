@@ -16,7 +16,6 @@
 
 package de.jkeylockmanager.manager;
 
-import de.jkeylockmanager.manager.exception.KeyLockManagerExecutionException;
 import de.jkeylockmanager.manager.exception.KeyLockManagerInterruptedException;
 import de.jkeylockmanager.manager.exception.KeyLockManagerTimeoutException;
 
@@ -51,8 +50,6 @@ public interface KeyLockManager {
 	 * @throws KeyLockManagerTimeoutException
 	 *             if the instance wide waiting time is exceeded, while waiting
 	 *             for a lock
-	 * @throws KeyLockManagerExecutionException
-	 *             if the computation inside the lock caused an exception
 	 */
 	void executeLocked(Object key, LockCallback callback);
 
@@ -74,8 +71,6 @@ public interface KeyLockManager {
 	 * @throws KeyLockManagerTimeoutException
 	 *             if the instance wide waiting time is exceeded, while waiting
 	 *             for lock
-	 * @throws KeyLockManagerExecutionException
-	 *             if the computation inside the lock caused an exception
 	 * 
 	 * @return result of the computation done in the callback
 	 */

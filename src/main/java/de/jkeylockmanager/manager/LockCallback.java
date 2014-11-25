@@ -28,10 +28,8 @@ public interface LockCallback {
 
 	/**
 	 * This method is called inside the lock.
-	 * 
-	 * @throws Exception
-	 *             if unable to complete computation
+	 *
 	 */
-	void doInLock() throws Exception;
+	void doInLock();
 
 }

@@ -16,17 +16,16 @@
 
 package de.jkeylockmanager.manager.implementation.lockstripe;
 
-import static java.lang.Math.abs;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
 import de.jkeylockmanager.contract.Contract;
 import de.jkeylockmanager.manager.KeyLockManager;
 import de.jkeylockmanager.manager.LockCallback;
 import de.jkeylockmanager.manager.ReturnValueLockCallback;
 import de.jkeylockmanager.manager.exception.KeyLockManagerException;
-import de.jkeylockmanager.manager.exception.KeyLockManagerExecutionException;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
+import static java.lang.Math.abs;
 
 /**
  * Implementation of {@link KeyLockManager}.
@@ -76,15 +75,13 @@ public final class StripedKeyLockManager implements KeyLockManager {
 
 		try {
 			executeLockedInternal(key, new ReturnValueLockCallback<Object>() {
-				public Object doInLock() throws Exception {
+				public Object doInLock()  {
 					callback.doInLock();
 					return null;
 				}
 			});
 		} catch (final KeyLockManagerException e) {
 			throw e;
-		} catch (final Exception e) {
-			throw new KeyLockManagerExecutionException(e);
 		}
 
 	}
@@ -97,12 +94,10 @@ public final class StripedKeyLockManager implements KeyLockManager {
 			return executeLockedInternal(key, callback);
 		} catch (final KeyLockManagerException e) {
 			throw e;
-		} catch (final Exception e) {
-			throw new KeyLockManagerExecutionException(e);
 		}
 	}
 
-	private <R> R executeLockedInternal(final Object key, final ReturnValueLockCallback<R> callback) throws Exception {
+	private <R> R executeLockedInternal(final Object key, final ReturnValueLockCallback<R> callback) {
 		assert key != null : "contract broken: key != null";
 		assert callback != null : "contract broken: callback != null";
 

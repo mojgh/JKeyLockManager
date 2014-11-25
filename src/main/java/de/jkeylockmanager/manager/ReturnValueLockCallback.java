@@ -28,10 +28,8 @@ public interface ReturnValueLockCallback<R> {
 
 	/**
 	 * This method is called inside the lock.
-	 * 
-	 * @throws Exception
-	 *             if unable to compute a result
+	 *
 	 */
-	R doInLock() throws Exception;
+	R doInLock();
 
 }

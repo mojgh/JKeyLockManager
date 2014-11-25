@@ -16,23 +16,20 @@
 
 package de.jkeylockmanager.manager.implementation.lockstripe;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import de.jkeylockmanager.manager.LockCallback;
+import de.jkeylockmanager.manager.ReturnValueLockCallback;
+import de.jkeylockmanager.manager.exception.KeyLockManagerException;
+import de.jkeylockmanager.manager.exception.KeyLockManagerInterruptedException;
+import de.jkeylockmanager.manager.exception.KeyLockManagerTimeoutException;
+import junit.framework.Assert;
+import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
-
-import de.jkeylockmanager.manager.LockCallback;
-import de.jkeylockmanager.manager.ReturnValueLockCallback;
-import de.jkeylockmanager.manager.exception.KeyLockManagerException;
-import de.jkeylockmanager.manager.exception.KeyLockManagerExecutionException;
-import de.jkeylockmanager.manager.exception.KeyLockManagerInterruptedException;
-import de.jkeylockmanager.manager.exception.KeyLockManagerTimeoutException;
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * 
@@ -77,8 +74,8 @@ public class StripedKeyLockManagerTest {
 							}
 						}
 					});
-				} catch (final KeyLockManagerExecutionException e) {
-					Assert.assertTrue(e.getCause() instanceof TestException);
+					Assert.fail();
+				} catch (TestException e) {
 				}
 			}
 		};
