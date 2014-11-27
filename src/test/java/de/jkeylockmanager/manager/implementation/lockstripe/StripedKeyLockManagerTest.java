@@ -21,15 +21,16 @@ import de.jkeylockmanager.manager.ReturnValueLockCallback;
 import de.jkeylockmanager.manager.exception.KeyLockManagerException;
 import de.jkeylockmanager.manager.exception.KeyLockManagerInterruptedException;
 import de.jkeylockmanager.manager.exception.KeyLockManagerTimeoutException;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * 
@@ -73,7 +74,7 @@ public class StripedKeyLockManagerTest {
 							}
 						}
 					});
-					Assert.fail();
+					fail();
 				} catch (TestException ignored) {
 				}
 			}

@@ -16,28 +16,18 @@
 
 package de.jkeylockmanager.manager.implementation.lockstripe;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Map.Entry;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import junit.framework.Assert;
-
-import org.junit.Test;
-
 import de.jkeylockmanager.manager.KeyLockManager;
 import de.jkeylockmanager.manager.LockCallback;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 /**
  * Stress test for {@link StripedKeyLockManager}.
@@ -165,7 +155,7 @@ public class StripedKeyLockManagerStressTest {
 			fail("executor service failed to shutdown");
 		}
 
-		Assert.assertFalse(service.concurrentUpdatesPerKey());
+		assertFalse(service.concurrentUpdatesPerKey());
 
 		assertEquals("all locks must me disposed", 0, manager.activeKeyLocksCount());
 
