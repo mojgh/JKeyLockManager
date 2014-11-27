@@ -69,13 +69,12 @@ public class StripedKeyLockManagerTest {
 								t1WorkUnitEntry.countDown();
 								t1ThrowException.await();
 								throw new TestException();
-							} catch (final InterruptedException e) {
-								return;
+							} catch (final InterruptedException ignored) {
 							}
 						}
 					});
 					Assert.fail();
-				} catch (TestException e) {
+				} catch (TestException ignored) {
 				}
 			}
 		};
@@ -130,8 +129,7 @@ public class StripedKeyLockManagerTest {
 						try {
 							t1WorkUnitEntry.countDown();
 							sleep(Long.MAX_VALUE);
-						} catch (final InterruptedException e) {
-							return;
+						} catch (final InterruptedException ignored) {
 						}
 					}
 				});
@@ -156,8 +154,7 @@ public class StripedKeyLockManagerTest {
 				} catch (final KeyLockManagerException e) {
 					try {
 						exchanger.exchange(e);
-					} catch (final InterruptedException e1) {
-						return;
+					} catch (final InterruptedException ignored) {
 					}
 				}
 			}
@@ -199,8 +196,7 @@ public class StripedKeyLockManagerTest {
 						try {
 							t1WorkUnitEntry.countDown();
 							sleep(Long.MAX_VALUE);
-						} catch (final InterruptedException e) {
-							return;
+						} catch (final InterruptedException ignored) {
 						}
 					}
 				});
@@ -222,8 +218,7 @@ public class StripedKeyLockManagerTest {
 						try {
 							t2WorkUnitEntry.countDown();
 							Thread.sleep(Long.MAX_VALUE);
-						} catch (final InterruptedException e) {
-							return;
+						} catch (final InterruptedException ignored) {
 						}
 					}
 				});
@@ -262,8 +257,7 @@ public class StripedKeyLockManagerTest {
 						try {
 							t1WorkUnitEntry.countDown();
 							sleep(Long.MAX_VALUE);
-						} catch (final InterruptedException e) {
-							return;
+						} catch (final InterruptedException ignored) {
 						}
 					}
 				});
@@ -285,8 +279,7 @@ public class StripedKeyLockManagerTest {
 						public void doInLock() {
 						}
 					});
-				} catch (final KeyLockManagerInterruptedException e) {
-					return;
+				} catch (final KeyLockManagerInterruptedException ignored) {
 				}
 			}
 		};
@@ -356,7 +349,7 @@ public class StripedKeyLockManagerTest {
 	 * on the same key
 	 */
 	@Test
-	public void testReentrantBehavoir() throws Exception {
+	public void testReentrantBehavior() throws Exception {
 
 		final StripedKeyLockManager manager = new StripedKeyLockManager(10, TimeUnit.SECONDS);
 
@@ -415,8 +408,7 @@ public class StripedKeyLockManagerTest {
 						try {
 							t1WorkUnitEntry.countDown();
 							sleep(Long.MAX_VALUE);
-						} catch (final InterruptedException e) {
-							return;
+						} catch (final InterruptedException ignored) {
 						}
 					}
 				});
@@ -441,8 +433,7 @@ public class StripedKeyLockManagerTest {
 				} catch (final KeyLockManagerException e) {
 					try {
 						exchanger.exchange(e);
-					} catch (final InterruptedException e1) {
-						return;
+					} catch (final InterruptedException ignored) {
 					}
 				}
 			}
@@ -480,8 +471,7 @@ public class StripedKeyLockManagerTest {
 						try {
 							t1WorkUnitEntry.countDown();
 							t1SignalToExit.await();
-						} catch (final InterruptedException e) {
-							return;
+						} catch (final InterruptedException ignored) {
 						}
 					}
 				});

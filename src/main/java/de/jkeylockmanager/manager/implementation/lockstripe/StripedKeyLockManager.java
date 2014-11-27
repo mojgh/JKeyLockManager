@@ -20,7 +20,6 @@ import de.jkeylockmanager.contract.Contract;
 import de.jkeylockmanager.manager.KeyLockManager;
 import de.jkeylockmanager.manager.LockCallback;
 import de.jkeylockmanager.manager.ReturnValueLockCallback;
-import de.jkeylockmanager.manager.exception.KeyLockManagerException;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -73,16 +72,12 @@ public final class StripedKeyLockManager implements KeyLockManager {
 		Contract.isNotNull(key, "key != null");
 		Contract.isNotNull(callback, "callback != null");
 
-		try {
-			executeLockedInternal(key, new ReturnValueLockCallback<Object>() {
-				public Object doInLock()  {
-					callback.doInLock();
-					return null;
-				}
-			});
-		} catch (final KeyLockManagerException e) {
-			throw e;
-		}
+		executeLockedInternal(key, new ReturnValueLockCallback<Object>() {
+            public Object doInLock()  {
+                callback.doInLock();
+                return null;
+            }
+        });
 
 	}
 
@@ -90,11 +85,7 @@ public final class StripedKeyLockManager implements KeyLockManager {
 		Contract.isNotNull(key, "key != null");
 		Contract.isNotNull(callback, "callback != null");
 
-		try {
-			return executeLockedInternal(key, callback);
-		} catch (final KeyLockManagerException e) {
-			throw e;
-		}
+		return executeLockedInternal(key, callback);
 	}
 
 	private <R> R executeLockedInternal(final Object key, final ReturnValueLockCallback<R> callback) {
@@ -114,7 +105,7 @@ public final class StripedKeyLockManager implements KeyLockManager {
 		}
 	}
 
-	private final void freeKeyLock(final Object key, final CountingLock lock) {
+	private void freeKeyLock(final Object key, final CountingLock lock) {
 		assert key != null : "contract broken: key != null";
 		assert lock != null : "contract broken: lock != null";
 		getStripedLock(key).tryLock();
@@ -128,7 +119,7 @@ public final class StripedKeyLockManager implements KeyLockManager {
 		}
 	}
 
-	private final CountingLock getKeyLock(final Object key) {
+	private CountingLock getKeyLock(final Object key) {
 		assert key != null : "contract broken: key != null";
 		getStripedLock(key).tryLock();
 		try {
@@ -147,7 +138,7 @@ public final class StripedKeyLockManager implements KeyLockManager {
 		}
 	}
 
-	private final CountingLock getStripedLock(final Object key) {
+	private CountingLock getStripedLock(final Object key) {
 		assert key != null : "contract broken: key != null";
 		return stripes[abs(key.hashCode() % stripes.length)];
 	}

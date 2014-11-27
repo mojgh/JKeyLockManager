@@ -56,17 +56,17 @@ public class StripedKeyLockManagerStressTest {
 		private final IWeatherService service;
 		private final List<String> keys;
 		private final Random random = new Random();
-		private final CyclicBarrier waitForOtherThreds;
+		private final CyclicBarrier waitForOtherThreads;
 
-		public TestThread(final IWeatherService service, final List<String> keys, final CyclicBarrier waitForOtherThreds) {
+		public TestThread(final IWeatherService service, final List<String> keys, final CyclicBarrier waitForOtherThreads) {
 			this.service = service;
 			this.keys = new ArrayList<String>(keys);
-			this.waitForOtherThreds = waitForOtherThreds;
+			this.waitForOtherThreads = waitForOtherThreads;
 		}
 
 		public void run() {
 			try {
-				waitForOtherThreds.await();
+				waitForOtherThreads.await();
 				for (int i = 0; i < INVOCATIONS_PER_THREAD; i++) {
 					final String key = keys.get(random.nextInt(keys.size()));
 					service.updateWeatherData(key);
@@ -154,10 +154,10 @@ public class StripedKeyLockManagerStressTest {
 
 		final ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
 
-		final CyclicBarrier waitForOtherThreds = new CyclicBarrier(THREAD_COUNT);
+		final CyclicBarrier waitForOtherThreads = new CyclicBarrier(THREAD_COUNT);
 
 		for (int i = 0; i < THREAD_COUNT; i++) {
-			executorService.execute(new TestThread(serviceProxy, keys, waitForOtherThreds));
+			executorService.execute(new TestThread(serviceProxy, keys, waitForOtherThreads));
 		}
 
 		executorService.shutdown();
