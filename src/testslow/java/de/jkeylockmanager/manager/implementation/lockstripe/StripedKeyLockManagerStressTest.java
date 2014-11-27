@@ -17,17 +17,13 @@
 package de.jkeylockmanager.manager.implementation.lockstripe;
 
 import de.jkeylockmanager.manager.KeyLockManager;
-import de.jkeylockmanager.manager.LockCallback;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Stress test for {@link StripedKeyLockManager}.
@@ -50,7 +46,7 @@ public class StripedKeyLockManagerStressTest {
 
 		public TestThread(final IWeatherService service, final List<String> keys, final CyclicBarrier waitForOtherThreads) {
 			this.service = service;
-			this.keys = new ArrayList<String>(keys);
+			this.keys = new ArrayList<>(keys);
 			this.waitForOtherThreads = waitForOtherThreads;
 		}
 
@@ -61,9 +57,7 @@ public class StripedKeyLockManagerStressTest {
 					final String key = keys.get(random.nextInt(keys.size()));
 					service.updateWeatherData(key);
 				}
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			} catch (final BrokenBarrierException e) {
+			} catch (final InterruptedException | BrokenBarrierException e) {
 				e.printStackTrace();
 			}
 		}
@@ -71,8 +65,8 @@ public class StripedKeyLockManagerStressTest {
 
 	private static class WeatherService implements IWeatherService {
 
-		private final Map<String, Integer> invocationsSafe = new HashMap<String, Integer>();
-		private final Map<String, Integer> invocationsUnsafe = new ConcurrentHashMap<String, Integer>();
+		private final Map<String, Integer> invocationsSafe = new HashMap<>();
+		private final Map<String, Integer> invocationsUnsafe = new ConcurrentHashMap<>();
 
 		public boolean concurrentUpdatesPerKey() {
 			boolean result = false;
@@ -133,7 +127,7 @@ public class StripedKeyLockManagerStressTest {
 		final WeatherService service = new WeatherService();
 		final WeatherServiceProxy serviceProxy = new WeatherServiceProxy(service, manager);
 
-		final List<String> keys = new ArrayList<String>();
+		final List<String> keys = new ArrayList<>();
 		for (int i = 0; i < DIFFERENT_KEYS; i++) {
 			keys.add(Integer.toString(i));
 		}

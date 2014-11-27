@@ -21,7 +21,7 @@ package de.jkeylockmanager.contract;
  * @author Marc-Olaf Jaschke
  * 
  */
-public class ContractBrokenError extends Error {
+class ContractBrokenError extends Error {
 
 	private static final long serialVersionUID = -5111361891728626973L;
 

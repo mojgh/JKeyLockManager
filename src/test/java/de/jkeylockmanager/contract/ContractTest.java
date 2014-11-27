@@ -19,6 +19,9 @@ package de.jkeylockmanager.contract;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 /**
  * 
  * @author Marc-Olaf Jaschke
@@ -35,9 +38,9 @@ public class ContractTest {
 
 		try {
 			Contract.isTrue(false, MESSAGE);
-			Assert.fail();
+			fail();
 		} catch (final ContractBrokenError e) {
-			Assert.assertEquals(String.format("contract broken: %s", MESSAGE), e.getMessage());
+			assertEquals(String.format("contract broken: %s", MESSAGE), e.getMessage());
 		}
 
 	}
@@ -49,9 +52,9 @@ public class ContractTest {
 
 		try {
 			Contract.isNotNull(null, MESSAGE);
-			Assert.fail();
+			fail();
 		} catch (final ContractBrokenError e) {
-			Assert.assertEquals(String.format("contract broken: %s", MESSAGE), e.getMessage());
+			assertEquals(String.format("contract broken: %s", MESSAGE), e.getMessage());
 		}
 
 	}

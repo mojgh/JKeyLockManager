@@ -16,21 +16,16 @@
 
 package de.jkeylockmanager.manager.implementation.lockstripe;
 
-import de.jkeylockmanager.manager.LockCallback;
-import de.jkeylockmanager.manager.ReturnValueLockCallback;
 import de.jkeylockmanager.manager.exception.KeyLockManagerException;
 import de.jkeylockmanager.manager.exception.KeyLockManagerInterruptedException;
 import de.jkeylockmanager.manager.exception.KeyLockManagerTimeoutException;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -43,7 +38,7 @@ public class StripedKeyLockManagerTest {
 		private static final long serialVersionUID = -7939021299106344924L;
 	}
 
-	public void assertCleanup(final StripedKeyLockManager lock) {
+	private void assertCleanup(final StripedKeyLockManager lock) {
 		assertEquals("not all locks were released", 0, lock.activeKeyLocksCount());
 	}
 

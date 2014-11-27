@@ -41,7 +41,7 @@ public final class StripedKeyLockManager implements KeyLockManager {
 
 	private static final int NUMBER_OF_STRIPES = 16;
 
-	private final ConcurrentHashMap<Object, CountingLock> key2lock = new ConcurrentHashMap<Object, CountingLock>();
+	private final ConcurrentHashMap<Object, CountingLock> key2lock = new ConcurrentHashMap<>();
 	private final CountingLock[] stripes = new CountingLock[NUMBER_OF_STRIPES];
 	private final long lockTimeout;
 	private final TimeUnit lockTimeoutUnit;
