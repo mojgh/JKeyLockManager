@@ -116,11 +116,7 @@ public class StripedKeyLockManagerStressTest {
 		}
 
 		public void updateWeatherData(final String cityName) {
-			lock.executeLocked(cityName, new LockCallback() {
-				public void doInLock() {
-					delegate.updateWeatherData(cityName);
-				}
-			});
+			lock.executeLocked(cityName, () -> delegate.updateWeatherData(cityName));
 		}
 
 	}

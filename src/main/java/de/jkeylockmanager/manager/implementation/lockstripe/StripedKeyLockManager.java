@@ -72,11 +72,9 @@ public final class StripedKeyLockManager implements KeyLockManager {
 		Contract.isNotNull(key, "key != null");
 		Contract.isNotNull(callback, "callback != null");
 
-		executeLockedInternal(key, new ReturnValueLockCallback<Object>() {
-            public Object doInLock()  {
-                callback.doInLock();
-                return null;
-            }
+		executeLockedInternal(key, () -> {
+            callback.doInLock();
+            return null;
         });
 
 	}

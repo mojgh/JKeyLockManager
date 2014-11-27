@@ -64,16 +64,14 @@ public class StripedKeyLockManagerTest {
 			@Override
 			public void run() {
 				try {
-					manager.executeLocked("test1", new LockCallback() {
-						public void doInLock() {
-							try {
-								t1WorkUnitEntry.countDown();
-								t1ThrowException.await();
-								throw new TestException();
-							} catch (final InterruptedException ignored) {
-							}
-						}
-					});
+					manager.executeLocked("test1", () -> {
+                        try {
+                            t1WorkUnitEntry.countDown();
+                            t1ThrowException.await();
+                            throw new TestException();
+                        } catch (final InterruptedException ignored) {
+                        }
+                    });
 					fail();
 				} catch (TestException ignored) {
 				}
@@ -88,10 +86,8 @@ public class StripedKeyLockManagerTest {
 		final Thread t2 = new Thread() {
 			@Override
 			public void run() {
-				manager.executeLocked("test1", new LockCallback() {
-					public void doInLock() {
-					}
-				});
+				manager.executeLocked("test1", () -> {
+                });
 			}
 		};
 		t2.start();
@@ -125,15 +121,13 @@ public class StripedKeyLockManagerTest {
 		final Thread t1 = new Thread() {
 			@Override
 			public void run() {
-				manager.executeLocked("test", new LockCallback() {
-					public void doInLock() {
-						try {
-							t1WorkUnitEntry.countDown();
-							sleep(Long.MAX_VALUE);
-						} catch (final InterruptedException ignored) {
-						}
-					}
-				});
+				manager.executeLocked("test", () -> {
+                    try {
+                        t1WorkUnitEntry.countDown();
+                        sleep(Long.MAX_VALUE);
+                    } catch (final InterruptedException ignored) {
+                    }
+                });
 			}
 		};
 		t1.start();
@@ -148,10 +142,8 @@ public class StripedKeyLockManagerTest {
 			@Override
 			public void run() {
 				try {
-					manager.executeLocked("test", new LockCallback() {
-						public void doInLock() {
-						}
-					});
+					manager.executeLocked("test", () -> {
+                    });
 				} catch (final KeyLockManagerException e) {
 					try {
 						exchanger.exchange(e);
@@ -192,15 +184,13 @@ public class StripedKeyLockManagerTest {
 		final Thread t1 = new Thread() {
 			@Override
 			public void run() {
-				manager.executeLocked("test1", new LockCallback() {
-					public void doInLock() {
-						try {
-							t1WorkUnitEntry.countDown();
-							sleep(Long.MAX_VALUE);
-						} catch (final InterruptedException ignored) {
-						}
-					}
-				});
+				manager.executeLocked("test1", () -> {
+                    try {
+                        t1WorkUnitEntry.countDown();
+                        sleep(Long.MAX_VALUE);
+                    } catch (final InterruptedException ignored) {
+                    }
+                });
 			}
 		};
 		t1.start();
@@ -214,15 +204,13 @@ public class StripedKeyLockManagerTest {
 		final Thread t2 = new Thread() {
 			@Override
 			public void run() {
-				manager.executeLocked("test2", new LockCallback() {
-					public void doInLock() {
-						try {
-							t2WorkUnitEntry.countDown();
-							Thread.sleep(Long.MAX_VALUE);
-						} catch (final InterruptedException ignored) {
-						}
-					}
-				});
+				manager.executeLocked("test2", () -> {
+                    try {
+                        t2WorkUnitEntry.countDown();
+                        Thread.sleep(Long.MAX_VALUE);
+                    } catch (final InterruptedException ignored) {
+                    }
+                });
 			}
 		};
 		t2.start();
@@ -253,15 +241,13 @@ public class StripedKeyLockManagerTest {
 		final Thread t1 = new Thread() {
 			@Override
 			public void run() {
-				manager.executeLocked("test", new LockCallback() {
-					public void doInLock() {
-						try {
-							t1WorkUnitEntry.countDown();
-							sleep(Long.MAX_VALUE);
-						} catch (final InterruptedException ignored) {
-						}
-					}
-				});
+				manager.executeLocked("test", () -> {
+                    try {
+                        t1WorkUnitEntry.countDown();
+                        sleep(Long.MAX_VALUE);
+                    } catch (final InterruptedException ignored) {
+                    }
+                });
 			}
 		};
 		t1.start();
@@ -276,10 +262,8 @@ public class StripedKeyLockManagerTest {
 			@Override
 			public void run() {
 				try {
-					manager.executeLocked("test", new LockCallback() {
-						public void doInLock() {
-						}
-					});
+					manager.executeLocked("test", () -> {
+                    });
 				} catch (final KeyLockManagerInterruptedException ignored) {
 				}
 			}
@@ -315,20 +299,14 @@ public class StripedKeyLockManagerTest {
 		final Thread t1 = new Thread() {
 			@Override
 			public void run() {
-				manager.executeLocked("test", new LockCallback() {
-					public void doInLock() {
-						manager.executeLocked("test2", new LockCallback() {
-							public void doInLock() {
-								try {
-									workUnitEntry.countDown();
-									workUnitExit.await();
-								} catch (final InterruptedException e) {
-									e.printStackTrace();
-								}
-							}
-						});
+				manager.executeLocked("test", () -> manager.executeLocked("test2", () -> {
+					try {
+						workUnitEntry.countDown();
+						workUnitExit.await();
+					} catch (final InterruptedException e) {
+						e.printStackTrace();
 					}
-				});
+				}));
 			}
 		};
 		t1.start();
@@ -360,20 +338,14 @@ public class StripedKeyLockManagerTest {
 		final Thread t1 = new Thread() {
 			@Override
 			public void run() {
-				manager.executeLocked("test", new LockCallback() {
-					public void doInLock() {
-						manager.executeLocked("test", new LockCallback() {
-							public void doInLock() {
-								try {
-									workUnitEntry.countDown();
-									workUnitExit.await();
-								} catch (final InterruptedException e) {
-									e.printStackTrace();
-								}
-							}
-						});
+				manager.executeLocked("test", () -> manager.executeLocked("test", () -> {
+					try {
+						workUnitEntry.countDown();
+						workUnitExit.await();
+					} catch (final InterruptedException e) {
+						e.printStackTrace();
 					}
-				});
+				}));
 			}
 		};
 		t1.start();
@@ -404,15 +376,13 @@ public class StripedKeyLockManagerTest {
 		final Thread t1 = new Thread() {
 			@Override
 			public void run() {
-				manager.executeLocked("test", new LockCallback() {
-					public void doInLock() {
-						try {
-							t1WorkUnitEntry.countDown();
-							sleep(Long.MAX_VALUE);
-						} catch (final InterruptedException ignored) {
-						}
-					}
-				});
+				manager.executeLocked("test", () -> {
+                    try {
+                        t1WorkUnitEntry.countDown();
+                        sleep(Long.MAX_VALUE);
+                    } catch (final InterruptedException ignored) {
+                    }
+                });
 			}
 		};
 		t1.start();
@@ -427,10 +397,8 @@ public class StripedKeyLockManagerTest {
 			@Override
 			public void run() {
 				try {
-					manager.executeLocked("test", new LockCallback() {
-						public void doInLock() {
-						}
-					});
+					manager.executeLocked("test", () -> {
+                    });
 				} catch (final KeyLockManagerException e) {
 					try {
 						exchanger.exchange(e);
@@ -467,15 +435,13 @@ public class StripedKeyLockManagerTest {
 		final Thread t1 = new Thread() {
 			@Override
 			public void run() {
-				manager.executeLocked("test", new LockCallback() {
-					public void doInLock() {
-						try {
-							t1WorkUnitEntry.countDown();
-							t1SignalToExit.await();
-						} catch (final InterruptedException ignored) {
-						}
-					}
-				});
+				manager.executeLocked("test", () -> {
+                    try {
+                        t1WorkUnitEntry.countDown();
+                        t1SignalToExit.await();
+                    } catch (final InterruptedException ignored) {
+                    }
+                });
 			}
 		};
 		t1.start();
@@ -485,10 +451,8 @@ public class StripedKeyLockManagerTest {
 		final Thread t2 = new Thread() {
 			@Override
 			public void run() {
-				manager.executeLocked("test", new LockCallback() {
-					public void doInLock() {
-					}
-				});
+				manager.executeLocked("test", () -> {
+                });
 			}
 		};
 		t2.start();
@@ -509,11 +473,7 @@ public class StripedKeyLockManagerTest {
 	public void testWithReturnValueCallback() {
 		final StripedKeyLockManager manager = new StripedKeyLockManager(10, TimeUnit.SECONDS);
 
-		assertEquals(Integer.valueOf(20), manager.executeLocked("test", new ReturnValueLockCallback<Integer>() {
-			public Integer doInLock() {
-				return 20;
-			}
-		}));
+		assertEquals(Integer.valueOf(20), manager.executeLocked("test", () -> 20));
 
 		assertCleanup(manager);
 	}
