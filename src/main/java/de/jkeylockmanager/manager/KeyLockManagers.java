@@ -33,7 +33,7 @@ public final class KeyLockManagers {
 	/**
 	 * Default lock wait time in seconds.
 	 */
-	public static final int DEFAULT_LOCK_TIMEOUT = 60 * 60; // 1 h in seconds
+	public static final int DEFAULT_LOCK_TIMEOUT = 1; // 1 h
 
 	/**
 	 * Returns a new {@link KeyLockManager} with default settings. The best
@@ -42,7 +42,7 @@ public final class KeyLockManagers {
 	 * @return the newly created lock
 	 */
 	public static KeyLockManager newLock() {
-		return new StripedKeyLockManager(DEFAULT_LOCK_TIMEOUT, TimeUnit.SECONDS);
+		return new StripedKeyLockManager(DEFAULT_LOCK_TIMEOUT, TimeUnit.HOURS);
 	}
 
 	/**

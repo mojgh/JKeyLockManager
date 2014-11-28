@@ -31,7 +31,4 @@ public abstract class KeyLockManagerException extends RuntimeException {
 		super(message);
 	}
 
-	KeyLockManagerException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
 }
