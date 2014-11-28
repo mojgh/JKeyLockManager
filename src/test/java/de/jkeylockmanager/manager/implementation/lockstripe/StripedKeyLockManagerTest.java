@@ -25,6 +25,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Thread.sleep;
 import static org.junit.Assert.*;
 
 /**
@@ -55,9 +56,7 @@ public class StripedKeyLockManagerTest {
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 		final CountDownLatch t1ThrowException = new CountDownLatch(1);
 
-		final Thread t1 = new Thread() {
-			@Override
-			public void run() {
+		final Thread t1 = new Thread(() -> {
 				try {
 					manager.executeLocked("test1", () -> {
                         try {
@@ -70,25 +69,20 @@ public class StripedKeyLockManagerTest {
 					fail();
 				} catch (TestException ignored) {
 				}
-			}
-		};
+			});
+
 		t1.start();
 
 		t1WorkUnitEntry.await();
 
 		// t2 should enter the work unit after t1 throws the exception
 
-		final Thread t2 = new Thread() {
-			@Override
-			public void run() {
-				manager.executeLocked("test1", () -> {
-                });
-			}
-		};
+		final Thread t2 = new Thread(() -> 	manager.executeLocked("test1", () -> {}));
+
 		t2.start();
 
 		while (manager.waitingThreadsCount() < 1) {
-			Thread.sleep(10);
+			sleep(10);
 		}
 
 		t1ThrowException.countDown();
@@ -113,18 +107,15 @@ public class StripedKeyLockManagerTest {
 
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 
-		final Thread t1 = new Thread() {
-			@Override
-			public void run() {
+		final Thread t1 = new Thread(() ->
 				manager.executeLocked("test", () -> {
                     try {
                         t1WorkUnitEntry.countDown();
                         sleep(Long.MAX_VALUE);
                     } catch (final InterruptedException ignored) {
                     }
-                });
-			}
-		};
+                }));
+
 		t1.start();
 
 		t1WorkUnitEntry.await();
@@ -132,25 +123,22 @@ public class StripedKeyLockManagerTest {
 		// t2 waits for t1 before entering the work unit and gets interrupted
 		// while waiting
 
-		final Exchanger<KeyLockManagerException> exchanger = new Exchanger<KeyLockManagerException>();
-		final Thread t2 = new Thread() {
-			@Override
-			public void run() {
+		final Exchanger<KeyLockManagerException> exchanger = new Exchanger<>();
+		final Thread t2 = new Thread(() -> {
 				try {
-					manager.executeLocked("test", () -> {
-                    });
+					manager.executeLocked("test", () -> {});
 				} catch (final KeyLockManagerException e) {
 					try {
 						exchanger.exchange(e);
 					} catch (final InterruptedException ignored) {
 					}
 				}
-			}
-		};
+			});
+
 		t2.start();
 
 		while (manager.waitingThreadsCount() < 1) {
-			Thread.sleep(10);
+			sleep(10);
 		}
 
 		t2.interrupt();
@@ -176,18 +164,15 @@ public class StripedKeyLockManagerTest {
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 		final CountDownLatch t2WorkUnitEntry = new CountDownLatch(1);
 
-		final Thread t1 = new Thread() {
-			@Override
-			public void run() {
+		final Thread t1 = new Thread(() ->
 				manager.executeLocked("test1", () -> {
                     try {
                         t1WorkUnitEntry.countDown();
                         sleep(Long.MAX_VALUE);
                     } catch (final InterruptedException ignored) {
                     }
-                });
-			}
-		};
+                }));
+
 		t1.start();
 
 		t1WorkUnitEntry.await();
@@ -196,18 +181,15 @@ public class StripedKeyLockManagerTest {
 
 		// t2 should not wait for t1 to enter the work unit
 
-		final Thread t2 = new Thread() {
-			@Override
-			public void run() {
+		final Thread t2 = new Thread(() ->
 				manager.executeLocked("test2", () -> {
                     try {
                         t2WorkUnitEntry.countDown();
                         Thread.sleep(Long.MAX_VALUE);
                     } catch (final InterruptedException ignored) {
                     }
-                });
-			}
-		};
+                }));
+
 		t2.start();
 
 		// blocks for many days, if 'test2' is blocked by 'test1'
@@ -233,18 +215,15 @@ public class StripedKeyLockManagerTest {
 
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 
-		final Thread t1 = new Thread() {
-			@Override
-			public void run() {
+		final Thread t1 = new Thread(() ->
 				manager.executeLocked("test", () -> {
                     try {
                         t1WorkUnitEntry.countDown();
                         sleep(Long.MAX_VALUE);
                     } catch (final InterruptedException ignored) {
                     }
-                });
-			}
-		};
+                }));
+
 		t1.start();
 
 		t1WorkUnitEntry.await();
@@ -253,20 +232,16 @@ public class StripedKeyLockManagerTest {
 
 		// t2 waits for t1 to become interrupted to enter the work unit
 
-		final Thread t2 = new Thread() {
-			@Override
-			public void run() {
+		final Thread t2 = new Thread(() -> {
 				try {
-					manager.executeLocked("test", () -> {
-                    });
+					manager.executeLocked("test", () -> {});
 				} catch (final KeyLockManagerInterruptedException ignored) {
 				}
-			}
-		};
+			});
 		t2.start();
 
 		while (manager.waitingThreadsCount() < 1) {
-			Thread.sleep(10);
+			sleep(10);
 		}
 
 		assertEquals(1, manager.waitingThreadsCount());
@@ -291,19 +266,17 @@ public class StripedKeyLockManagerTest {
 		final CountDownLatch workUnitEntry = new CountDownLatch(1);
 		final CountDownLatch workUnitExit = new CountDownLatch(1);
 
-		final Thread t1 = new Thread() {
-			@Override
-			public void run() {
-				manager.executeLocked("test", () -> manager.executeLocked("test2", () -> {
-					try {
-						workUnitEntry.countDown();
-						workUnitExit.await();
-					} catch (final InterruptedException e) {
-						e.printStackTrace();
-					}
-				}));
-			}
-		};
+		final Thread t1 = new Thread(() ->
+				manager.executeLocked("test", () ->
+						manager.executeLocked("test2", () -> {
+							try {
+								workUnitEntry.countDown();
+								workUnitExit.await();
+							} catch (final InterruptedException e) {
+								e.printStackTrace();
+							}
+						})));
+
 		t1.start();
 
 		workUnitEntry.await(); // waits many days if lock is not released
@@ -330,19 +303,18 @@ public class StripedKeyLockManagerTest {
 		final CountDownLatch workUnitEntry = new CountDownLatch(1);
 		final CountDownLatch workUnitExit = new CountDownLatch(1);
 
-		final Thread t1 = new Thread() {
-			@Override
-			public void run() {
-				manager.executeLocked("test", () -> manager.executeLocked("test", () -> {
-					try {
-						workUnitEntry.countDown();
-						workUnitExit.await();
-					} catch (final InterruptedException e) {
-						e.printStackTrace();
-					}
-				}));
-			}
-		};
+		final Thread t1 = new Thread(() ->
+				manager.executeLocked("test", () ->
+						manager.executeLocked("test", () ->
+						{
+							try {
+								workUnitEntry.countDown();
+								workUnitExit.await();
+							} catch (final InterruptedException e) {
+								e.printStackTrace();
+							}
+						})));
+
 		t1.start();
 
 		workUnitEntry.await(); // waits 10s, if lock is not released
@@ -368,40 +340,32 @@ public class StripedKeyLockManagerTest {
 
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 
-		final Thread t1 = new Thread() {
-			@Override
-			public void run() {
+		final Thread t1 = new Thread(() ->
 				manager.executeLocked("test", () -> {
                     try {
                         t1WorkUnitEntry.countDown();
                         sleep(Long.MAX_VALUE);
                     } catch (final InterruptedException ignored) {
                     }
-                });
-			}
-		};
+				}));
 		t1.start();
 
 		t1WorkUnitEntry.await();
 
 		// t2 waits for t1 to enter the work unit and should timeout
 
-		final Exchanger<KeyLockManagerException> exchanger = new Exchanger<KeyLockManagerException>();
+		final Exchanger<KeyLockManagerException> exchanger = new Exchanger<>();
 
-		final Thread t2 = new Thread() {
-			@Override
-			public void run() {
+		final Thread t2 = new Thread(() -> {
 				try {
-					manager.executeLocked("test", () -> {
-                    });
+					manager.executeLocked("test", () -> { });
 				} catch (final KeyLockManagerException e) {
 					try {
 						exchanger.exchange(e);
 					} catch (final InterruptedException ignored) {
 					}
 				}
-			}
-		};
+			});
 		t2.start();
 
 		assertTrue(exchanger.exchange(null) instanceof KeyLockManagerTimeoutException);
@@ -427,33 +391,23 @@ public class StripedKeyLockManagerTest {
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 		final CountDownLatch t1SignalToExit = new CountDownLatch(1);
 
-		final Thread t1 = new Thread() {
-			@Override
-			public void run() {
+		final Thread t1 = new Thread(() ->
 				manager.executeLocked("test", () -> {
-                    try {
-                        t1WorkUnitEntry.countDown();
-                        t1SignalToExit.await();
-                    } catch (final InterruptedException ignored) {
-                    }
-                });
-			}
-		};
+					try {
+						t1WorkUnitEntry.countDown();
+						t1SignalToExit.await();
+					} catch (final InterruptedException ignored) {
+					}
+				}));
 		t1.start();
 
 		t1WorkUnitEntry.await();
 
-		final Thread t2 = new Thread() {
-			@Override
-			public void run() {
-				manager.executeLocked("test", () -> {
-                });
-			}
-		};
+		final Thread t2 = new Thread(() -> manager.executeLocked("test", () -> { }));
 		t2.start();
 
 		while (manager.waitingThreadsCount() < 1) {
-			Thread.sleep(10);
+			sleep(10);
 		}
 
 		t1SignalToExit.countDown();

@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 
+import static java.lang.Thread.sleep;
 import static org.junit.Assert.*;
 
 /**
@@ -90,7 +91,7 @@ public class StripedKeyLockManagerStressTest {
 			final Integer count = invocations.get(cityName);
 			if (wait) {
 				try {
-					Thread.sleep(0, 10);
+					sleep(0, 10);
 				} catch (final InterruptedException e) {
 					throw new RuntimeException(e);
 				}
@@ -115,7 +116,7 @@ public class StripedKeyLockManagerStressTest {
 
 	}
 
-	private static final int LOCK_TIMEOUT = 60 * 60; // 1 h in seconds
+	private static final int LOCK_TIMEOUT = 1;
 	private static final int DIFFERENT_KEYS = 5;
 	private static final int THREAD_COUNT = 200;
 	private static final int INVOCATIONS_PER_THREAD = 1000;
@@ -123,7 +124,7 @@ public class StripedKeyLockManagerStressTest {
 	@Test
 	public void testDoLocked() throws InterruptedException {
 
-		final StripedKeyLockManager manager = new StripedKeyLockManager(LOCK_TIMEOUT, TimeUnit.SECONDS);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(LOCK_TIMEOUT, TimeUnit.HOURS);
 		final WeatherService service = new WeatherService();
 		final WeatherServiceProxy serviceProxy = new WeatherServiceProxy(service, manager);
 
@@ -141,7 +142,7 @@ public class StripedKeyLockManagerStressTest {
 		}
 
 		executorService.shutdown();
-		if (!executorService.awaitTermination(10 * 60, TimeUnit.SECONDS)) {
+		if (!executorService.awaitTermination(10, TimeUnit.MINUTES)) {
 			fail("executor service failed to shutdown");
 		}
 

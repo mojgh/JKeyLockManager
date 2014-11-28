@@ -114,7 +114,7 @@ final class CountingLock {
 	}
 
 	/**
-	 * Delegates to {@link ReentrantLock#getQueueLength()}
+	 * Delegates to {@link java.util.concurrent.locks.ReentrantLock#unlock()}
 	 */
 	void unlock() {
 		delegate.unlock();
