@@ -34,92 +34,11 @@ import static org.junit.Assert.*;
  */
 public class StripedKeyLockManagerStressTest {
 
-	private interface IWeatherService {
-		void updateWeatherData(String cityName);
-	}
-
-	private static class TestThread implements Runnable {
-
-		private final IWeatherService service;
-		private final List<String> keys;
-		private final Random random = new Random();
-		private final CyclicBarrier waitForOtherThreads;
-
-		public TestThread(final IWeatherService service, final List<String> keys, final CyclicBarrier waitForOtherThreads) {
-			this.service = service;
-			this.keys = new ArrayList<>(keys);
-			this.waitForOtherThreads = waitForOtherThreads;
-		}
-
-		public void run() {
-			try {
-				waitForOtherThreads.await();
-				for (int i = 0; i < INVOCATIONS_PER_THREAD; i++) {
-					final String key = keys.get(random.nextInt(keys.size()));
-					service.updateWeatherData(key);
-				}
-			} catch (final InterruptedException | BrokenBarrierException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private static class WeatherService implements IWeatherService {
-
-		private final Map<String, Integer> invocationsSafe = new HashMap<>();
-		private final Map<String, Integer> invocationsUnsafe = new ConcurrentHashMap<>();
-
-		public boolean concurrentUpdatesPerKey() {
-			boolean result = false;
-			for (final Entry<String, Integer> entry : invocationsSafe.entrySet()) {
-				if (!entry.getValue().equals(invocationsUnsafe.get(entry.getKey()))) {
-					result = true;
-					break;
-				}
-			}
-			return result;
-		}
-
-		public void updateWeatherData(final String cityName) {
-			synchronized (this) {
-				incCounter(cityName, invocationsSafe, false);
-			}
-			incCounter(cityName, invocationsUnsafe, true);
-		}
-
-		private void incCounter(final String cityName, final Map<String, Integer> invocations, final boolean wait) {
-			final Integer count = invocations.get(cityName);
-			if (wait) {
-				try {
-					sleep(0, 10);
-				} catch (final InterruptedException e) {
-					throw new RuntimeException(e);
-				}
-			}
-			invocations.put(cityName, count == null ? 1 : count + 1);
-		}
-	}
-
-	private static class WeatherServiceProxy implements IWeatherService {
-
-		private final IWeatherService delegate;
-		private final KeyLockManager lock;
-
-		public WeatherServiceProxy(final IWeatherService delegate, final KeyLockManager lock) {
-			this.delegate = delegate;
-			this.lock = lock;
-		}
-
-		public void updateWeatherData(final String cityName) {
-			lock.executeLocked(cityName, () -> delegate.updateWeatherData(cityName));
-		}
-
-	}
-
 	private static final int LOCK_TIMEOUT = 1;
 	private static final int DIFFERENT_KEYS = 5;
 	private static final int THREAD_COUNT = 200;
 	private static final int INVOCATIONS_PER_THREAD = 1000;
+    
 
 	@Test
 	public void testDoLocked() throws InterruptedException {
@@ -152,4 +71,86 @@ public class StripedKeyLockManagerStressTest {
 
 	}
 
+
+    private interface IWeatherService {
+        void updateWeatherData(String cityName);
+    }
+
+    private static class TestThread implements Runnable {
+
+        private final IWeatherService service;
+        private final List<String> keys;
+        private final Random random = new Random();
+        private final CyclicBarrier waitForOtherThreads;
+
+        public TestThread(final IWeatherService service, final List<String> keys, final CyclicBarrier waitForOtherThreads) {
+            this.service = service;
+            this.keys = new ArrayList<>(keys);
+            this.waitForOtherThreads = waitForOtherThreads;
+        }
+
+        public void run() {
+            try {
+                waitForOtherThreads.await();
+                for (int i = 0; i < INVOCATIONS_PER_THREAD; i++) {
+                    final String key = keys.get(random.nextInt(keys.size()));
+                    service.updateWeatherData(key);
+                }
+            } catch (final InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static class WeatherService implements IWeatherService {
+
+        private final Map<String, Integer> invocationsSafe = new HashMap<>();
+        private final Map<String, Integer> invocationsUnsafe = new ConcurrentHashMap<>();
+
+        public boolean concurrentUpdatesPerKey() {
+            boolean result = false;
+            for (final Entry<String, Integer> entry : invocationsSafe.entrySet()) {
+                if (!entry.getValue().equals(invocationsUnsafe.get(entry.getKey()))) {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        public void updateWeatherData(final String cityName) {
+            synchronized (this) {
+                incCounter(cityName, invocationsSafe, false);
+            }
+            incCounter(cityName, invocationsUnsafe, true);
+        }
+
+        private void incCounter(final String cityName, final Map<String, Integer> invocations, final boolean wait) {
+            final Integer count = invocations.get(cityName);
+            if (wait) {
+                try {
+                    sleep(0, 10);
+                } catch (final InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            invocations.put(cityName, count == null ? 1 : count + 1);
+        }
+    }
+
+    private static class WeatherServiceProxy implements IWeatherService {
+
+        private final IWeatherService delegate;
+        private final KeyLockManager lock;
+
+        public WeatherServiceProxy(final IWeatherService delegate, final KeyLockManager lock) {
+            this.delegate = delegate;
+            this.lock = lock;
+        }
+
+        public void updateWeatherData(final String cityName) {
+            lock.executeLocked(cityName, () -> delegate.updateWeatherData(cityName));
+        }
+
+    }
 }

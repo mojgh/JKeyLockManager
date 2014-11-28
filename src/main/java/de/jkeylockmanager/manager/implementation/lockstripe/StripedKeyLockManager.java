@@ -21,10 +21,12 @@ import de.jkeylockmanager.manager.KeyLockManager;
 import de.jkeylockmanager.manager.LockCallback;
 import de.jkeylockmanager.manager.ReturnValueLockCallback;
 
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.abs;
+import static java.util.Arrays.setAll;
 
 /**
  * Implementation of {@link KeyLockManager}.
@@ -63,9 +65,7 @@ public final class StripedKeyLockManager implements KeyLockManager {
 		this.lockTimeout = lockTimeout;
 		this.lockTimeoutUnit = lockTimeoutUnit;
 
-		for (int i = 0; i < stripes.length; i++) {
-			stripes[i] = new CountingLock(lockTimeout, lockTimeoutUnit);
-		}
+        setAll(stripes, i -> new CountingLock(lockTimeout, lockTimeoutUnit));
 	}
 
 	public final void executeLocked(final Object key, final LockCallback callback) {
