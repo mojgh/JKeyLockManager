@@ -19,6 +19,8 @@ package de.jkeylockmanager.manager.implementation.lockstripe;
 import de.jkeylockmanager.manager.exception.KeyLockManagerException;
 import de.jkeylockmanager.manager.exception.KeyLockManagerInterruptedException;
 import de.jkeylockmanager.manager.exception.KeyLockManagerTimeoutException;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
@@ -26,6 +28,7 @@ import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.sleep;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 
 /**
@@ -143,7 +146,7 @@ public class StripedKeyLockManagerTest {
 
 		t2.interrupt();
 
-		assertTrue(exchanger.exchange(null) instanceof KeyLockManagerInterruptedException);
+        assertThat(exchanger.exchange(null), instanceOf(KeyLockManagerInterruptedException.class));
 
 		t1.interrupt();
 		t1.join();
@@ -368,7 +371,7 @@ public class StripedKeyLockManagerTest {
 			});
 		t2.start();
 
-		assertTrue(exchanger.exchange(null) instanceof KeyLockManagerTimeoutException);
+        assertThat(exchanger.exchange(null), instanceOf(KeyLockManagerTimeoutException.class));
 
 		assertEquals("lock was disposed to early", 1, manager.activeKeyLocksCount());
 
