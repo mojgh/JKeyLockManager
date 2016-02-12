@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Marc-Olaf Jaschke
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,21 +16,34 @@
 
 package de.jkeylockmanager.manager.implementation.lockstripe;
 
-import de.jkeylockmanager.manager.KeyLockManager;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.*;
+import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.sleep;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
+import de.jkeylockmanager.manager.KeyLockManager;
+import de.jkeylockmanager.manager.KeyLockManagers;
 
 /**
  * Stress test for {@link StripedKeyLockManager}.
- * 
+ *
  * @author Marc-Olaf Jaschke
- * 
+ *
  */
 public class StripedKeyLockManagerStressTest {
 
@@ -38,12 +51,12 @@ public class StripedKeyLockManagerStressTest {
 	private static final int DIFFERENT_KEYS = 5;
 	private static final int THREAD_COUNT = 200;
 	private static final int INVOCATIONS_PER_THREAD = 1000;
-    
+
 
 	@Test
 	public void testDoLocked() throws InterruptedException {
 
-		final StripedKeyLockManager manager = new StripedKeyLockManager(LOCK_TIMEOUT, TimeUnit.HOURS);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(LOCK_TIMEOUT, TimeUnit.HOURS, KeyLockManagers.DEFAULT_NUMBER_OF_STRIPES);
 		final WeatherService service = new WeatherService();
 		final WeatherServiceProxy serviceProxy = new WeatherServiceProxy(service, manager);
 
@@ -89,7 +102,8 @@ public class StripedKeyLockManagerStressTest {
             this.waitForOtherThreads = waitForOtherThreads;
         }
 
-        public void run() {
+        @Override
+		public void run() {
             try {
                 waitForOtherThreads.await();
                 for (int i = 0; i < INVOCATIONS_PER_THREAD; i++) {
@@ -118,7 +132,8 @@ public class StripedKeyLockManagerStressTest {
             return result;
         }
 
-        public void updateWeatherData(final String cityName) {
+        @Override
+		public void updateWeatherData(final String cityName) {
             synchronized (this) {
                 incCounter(cityName, invocationsSafe, false);
             }
@@ -148,7 +163,8 @@ public class StripedKeyLockManagerStressTest {
             this.lock = lock;
         }
 
-        public void updateWeatherData(final String cityName) {
+        @Override
+		public void updateWeatherData(final String cityName) {
             lock.executeLocked(cityName, () -> delegate.updateWeatherData(cityName));
         }
 

@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Marc-Olaf Jaschke
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,11 +16,6 @@
 
 package de.jkeylockmanager.manager.implementation.lockstripe;
 
-import de.jkeylockmanager.manager.exception.KeyLockManagerException;
-import de.jkeylockmanager.manager.exception.KeyLockManagerInterruptedException;
-import de.jkeylockmanager.manager.exception.KeyLockManagerTimeoutException;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
@@ -29,12 +24,19 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
+import de.jkeylockmanager.manager.KeyLockManagers;
+import de.jkeylockmanager.manager.exception.KeyLockManagerException;
+import de.jkeylockmanager.manager.exception.KeyLockManagerInterruptedException;
+import de.jkeylockmanager.manager.exception.KeyLockManagerTimeoutException;
 
 /**
- * 
+ *
  * @author Marc-Olaf Jaschke
- * 
+ *
  */
 public class StripedKeyLockManagerTest {
 
@@ -54,7 +56,7 @@ public class StripedKeyLockManagerTest {
 	@Test
 	public void testExceptionInWorkUnit() throws Exception {
 
-		final StripedKeyLockManager manager = new StripedKeyLockManager(Long.MAX_VALUE, TimeUnit.SECONDS);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(Long.MAX_VALUE, TimeUnit.SECONDS, KeyLockManagers.DEFAULT_NUMBER_OF_STRIPES);
 
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 		final CountDownLatch t1ThrowException = new CountDownLatch(1);
@@ -106,7 +108,7 @@ public class StripedKeyLockManagerTest {
 	@Test
 	public void testInterruptReaction() throws Exception {
 
-		final StripedKeyLockManager manager = new StripedKeyLockManager(Long.MAX_VALUE, TimeUnit.SECONDS);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(Long.MAX_VALUE, TimeUnit.SECONDS, KeyLockManagers.DEFAULT_NUMBER_OF_STRIPES);
 
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 
@@ -162,7 +164,7 @@ public class StripedKeyLockManagerTest {
 	@Test
 	public void testLockWithDifferentKeys() throws Exception {
 
-		final StripedKeyLockManager manager = new StripedKeyLockManager(Long.MAX_VALUE, TimeUnit.SECONDS);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(Long.MAX_VALUE, TimeUnit.SECONDS, KeyLockManagers.DEFAULT_NUMBER_OF_STRIPES);
 
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 		final CountDownLatch t2WorkUnitEntry = new CountDownLatch(1);
@@ -214,7 +216,7 @@ public class StripedKeyLockManagerTest {
 	@Test
 	public void testLockWithOneKey() throws Exception {
 
-		final StripedKeyLockManager manager = new StripedKeyLockManager(Long.MAX_VALUE, TimeUnit.SECONDS);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(Long.MAX_VALUE, TimeUnit.SECONDS, KeyLockManagers.DEFAULT_NUMBER_OF_STRIPES);
 
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 
@@ -264,7 +266,7 @@ public class StripedKeyLockManagerTest {
 	@Test
 	public void testNestedUse() throws Exception {
 
-		final StripedKeyLockManager manager = new StripedKeyLockManager(500, TimeUnit.MILLISECONDS);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(500, TimeUnit.MILLISECONDS, KeyLockManagers.DEFAULT_NUMBER_OF_STRIPES);
 
 		final CountDownLatch workUnitEntry = new CountDownLatch(1);
 		final CountDownLatch workUnitExit = new CountDownLatch(1);
@@ -301,7 +303,7 @@ public class StripedKeyLockManagerTest {
 	@Test
 	public void testReentrantBehavior() throws Exception {
 
-		final StripedKeyLockManager manager = new StripedKeyLockManager(10, TimeUnit.SECONDS);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(10, TimeUnit.SECONDS, KeyLockManagers.DEFAULT_NUMBER_OF_STRIPES);
 
 		final CountDownLatch workUnitEntry = new CountDownLatch(1);
 		final CountDownLatch workUnitExit = new CountDownLatch(1);
@@ -339,7 +341,7 @@ public class StripedKeyLockManagerTest {
 	@Test
 	public void testTimeoutReaction() throws Exception {
 
-		final StripedKeyLockManager manager = new StripedKeyLockManager(500, TimeUnit.MILLISECONDS);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(500, TimeUnit.MILLISECONDS, KeyLockManagers.DEFAULT_NUMBER_OF_STRIPES);
 
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 
@@ -389,7 +391,7 @@ public class StripedKeyLockManagerTest {
 	@Test
 	public void testUnlockAfterNormalWorkUnitExit() throws Exception {
 
-		final StripedKeyLockManager manager = new StripedKeyLockManager(500, TimeUnit.MILLISECONDS);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(500, TimeUnit.MILLISECONDS, KeyLockManagers.DEFAULT_NUMBER_OF_STRIPES);
 
 		final CountDownLatch t1WorkUnitEntry = new CountDownLatch(1);
 		final CountDownLatch t1SignalToExit = new CountDownLatch(1);
@@ -423,7 +425,7 @@ public class StripedKeyLockManagerTest {
 
 	@Test
 	public void testWithReturnValueCallback() {
-		final StripedKeyLockManager manager = new StripedKeyLockManager(10, TimeUnit.SECONDS);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(10, TimeUnit.SECONDS, KeyLockManagers.DEFAULT_NUMBER_OF_STRIPES);
 
 		assertEquals(Integer.valueOf(20), manager.executeLocked("test", () -> 20));
 
