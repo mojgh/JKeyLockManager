@@ -39,29 +39,46 @@ import static java.lang.Math.abs;
  */
 public final class StripedKeyLockManager implements KeyLockManager {
 
-	private static final int NUMBER_OF_STRIPES = 16;
+	/**
+	 * Default number of stripes
+	 */
+	private static final int DEFAULT_NUMBER_OF_STRIPES = 16;
+
 
 	private final ConcurrentHashMap<Object, CountingLock> key2lock = new ConcurrentHashMap<Object, CountingLock>();
-	private final CountingLock[] stripes = new CountingLock[NUMBER_OF_STRIPES];
+	private final CountingLock[] stripes;
 	private final long lockTimeout;
 	private final TimeUnit lockTimeoutUnit;
 
+
 	/**
-	 * Creates a new instance of {@link StripedKeyLockManager} with the given
-	 * settings.
-	 * 
-	 * @param lockTimeout
-	 *            - the time to wait for a lock before a Exception is thrown -
-	 *            must be greater than 0
-	 * @param lockTimeoutUnit
-	 *            - the unit for lockTimeout - must not be null
+	 * Creates a new instance of {@link StripedKeyLockManager} with the a default number of stripes
+	 *
+	 * see #StripedKeyLockManager(long, java.util.concurrent.TimeUnit, int)
+	 *
 	 */
 	public StripedKeyLockManager(final long lockTimeout, final TimeUnit lockTimeoutUnit) {
+		this(lockTimeout, lockTimeoutUnit, DEFAULT_NUMBER_OF_STRIPES);
+	}
+
+	/**
+	 * Creates a new instance of {@link StripedKeyLockManager} with the given settings.
+	 *
+	 * @param lockTimeout
+	 *            the time to wait for a lock before a Exception is thrown - must be greater than 0
+	 * @param lockTimeoutUnit
+	 *            the unit for lockTimeout - must not be null
+	 * @param numberOfStripes
+	 *            the number of stripes used for locking
+	 */
+	public StripedKeyLockManager(final long lockTimeout, final TimeUnit lockTimeoutUnit, final int numberOfStripes) {
 		Contract.isNotNull(lockTimeoutUnit, "lockTimeoutUnit != null");
 		Contract.isTrue(lockTimeout > 0, "lockTimeout > 0");
+		Contract.isTrue(numberOfStripes > 0, "numberOfStripes > 0");
 
 		this.lockTimeout = lockTimeout;
 		this.lockTimeoutUnit = lockTimeoutUnit;
+		stripes = new CountingLock[numberOfStripes];
 
 		for (int i = 0; i < stripes.length; i++) {
 			stripes[i] = new CountingLock(lockTimeout, lockTimeoutUnit);
