@@ -61,7 +61,7 @@ Java 8
 <dependency>
   <groupId>de.jkeylockmanager</groupId>
   <artifactId>jkeylockmanager</artifactId>
-  <version>2.0.0</version>
+  <version>2.1.0</version>
 </dependency>
 ```
 
@@ -70,13 +70,15 @@ Java 5, 6, 7
 <dependency>
   <groupId>de.jkeylockmanager</groupId>
   <artifactId>jkeylockmanager</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
+
 
 #### Source
 
 Start with `KeyLockManagers` in order to get instances of KLM.
+
 
 
 ### Versions
@@ -86,7 +88,12 @@ Start with `KeyLockManagers` in order to get instances of KLM.
 
 ##### 2.1.0
 
-Make number of stripes configurable (Provided by https://github.com/jschmied)
+Make number of stripes configurable (Based on pull request from https://github.com/jschmied)
+
+###### Example
+```java
+KeyLockManager lockManager = new StripedKeyLockManager(10, TimeUnit.MINUTES, 120);
+```
 
 ##### 2.0.0
 
@@ -94,6 +101,10 @@ Use of Java 8
 
 
 #### Version 1
+
+##### Version 1.2.0
+
+Backport from Version 2 - Make number of stripes configurable
 
 ##### Version 1.1.0
 
