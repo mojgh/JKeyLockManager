@@ -16,28 +16,15 @@
 
 package de.jkeylockmanager.manager.implementation.lockstripe;
 
+import de.jkeylockmanager.manager.KeyLockManager;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static java.lang.Thread.sleep;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-
-import de.jkeylockmanager.manager.KeyLockManager;
-import de.jkeylockmanager.manager.KeyLockManagers;
+import static org.junit.Assert.*;
 
 /**
  * Stress test for {@link StripedKeyLockManager}.
@@ -56,7 +43,7 @@ public class StripedKeyLockManagerStressTest {
 	@Test
 	public void testDoLocked() throws InterruptedException {
 
-		final StripedKeyLockManager manager = new StripedKeyLockManager(LOCK_TIMEOUT, TimeUnit.HOURS, KeyLockManagers.DEFAULT_NUMBER_OF_STRIPES);
+		final StripedKeyLockManager manager = new StripedKeyLockManager(LOCK_TIMEOUT, TimeUnit.HOURS);
 		final WeatherService service = new WeatherService();
 		final WeatherServiceProxy serviceProxy = new WeatherServiceProxy(service, manager);
 

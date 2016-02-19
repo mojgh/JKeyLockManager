@@ -16,16 +16,16 @@
 
 package de.jkeylockmanager.manager.implementation.lockstripe;
 
+import de.jkeylockmanager.contract.Contract;
+import de.jkeylockmanager.manager.KeyLockManager;
+import de.jkeylockmanager.manager.LockCallback;
+import de.jkeylockmanager.manager.ReturnValueLockCallback;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.abs;
 import static java.util.Arrays.setAll;
-
-import de.jkeylockmanager.contract.Contract;
-import de.jkeylockmanager.manager.KeyLockManager;
-import de.jkeylockmanager.manager.LockCallback;
-import de.jkeylockmanager.manager.ReturnValueLockCallback;
 
 /**
  * Implementation of {@link KeyLockManager}.
@@ -40,29 +40,50 @@ import de.jkeylockmanager.manager.ReturnValueLockCallback;
 public final class StripedKeyLockManager implements KeyLockManager {
 
 
+	/**
+	 * Default number of Stripes
+	 */
+	private static final int DEFAULT_NUMBER_OF_STRIPES = 16;
+
+
 	private final ConcurrentHashMap<Object, CountingLock> key2lock = new ConcurrentHashMap<>();
-	private CountingLock[] stripes;
+	private final CountingLock[] stripes;
 	private final long lockTimeout;
 	private final TimeUnit lockTimeoutUnit;
+
+
+	/**
+	 * Creates a new instance of {@link StripedKeyLockManager} with the a default number of stripes
+	 *
+	 * see #StripedKeyLockManager(long, java.util.concurrent.TimeUnit, int)
+	 *
+	 */
+	public StripedKeyLockManager(final long lockTimeout, final TimeUnit lockTimeoutUnit) {
+		this(lockTimeout, lockTimeoutUnit, DEFAULT_NUMBER_OF_STRIPES);
+	}
 
 	/**
 	 * Creates a new instance of {@link StripedKeyLockManager} with the given settings.
 	 *
 	 * @param lockTimeout
-	 *            - the time to wait for a lock before a Exception is thrown - must be greater than 0
+	 *            the time to wait for a lock before a Exception is thrown - must be greater than 0
 	 * @param lockTimeoutUnit
-	 *            - the unit for lockTimeout - must not be null
+	 *            the unit for lockTimeout - must not be null
+	 * @param numberOfStripes
+	 *            the number of stripes used for locking
 	 */
 	public StripedKeyLockManager(final long lockTimeout, final TimeUnit lockTimeoutUnit, final int numberOfStripes) {
 		Contract.isNotNull(lockTimeoutUnit, "lockTimeoutUnit != null");
 		Contract.isTrue(lockTimeout > 0, "lockTimeout > 0");
+		Contract.isTrue(numberOfStripes > 0, "numberOfStripes > 0");
 
 		this.lockTimeout = lockTimeout;
 		this.lockTimeoutUnit = lockTimeoutUnit;
 		this.stripes = new CountingLock[numberOfStripes];
 
-        setAll(stripes, i -> new CountingLock(lockTimeout, lockTimeoutUnit));
+		setAll(stripes, i -> new CountingLock(lockTimeout, lockTimeoutUnit));
 	}
+
 
 	@Override
 	public final void executeLocked(final Object key, final LockCallback callback) {
@@ -83,6 +104,7 @@ public final class StripedKeyLockManager implements KeyLockManager {
 
 		return executeLockedInternal(key, callback);
 	}
+
 
 	private <R> R executeLockedInternal(final Object key, final ReturnValueLockCallback<R> callback) {
 		assert key != null : "contract broken: key != null";

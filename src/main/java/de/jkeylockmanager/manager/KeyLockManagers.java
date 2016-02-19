@@ -16,9 +16,9 @@
 
 package de.jkeylockmanager.manager;
 
-import java.util.concurrent.TimeUnit;
-
 import de.jkeylockmanager.manager.implementation.lockstripe.StripedKeyLockManager;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -34,10 +34,6 @@ public final class KeyLockManagers {
 	 */
 	public static final int DEFAULT_LOCK_TIMEOUT = 1; // 1 h
 
-	/**
-	 * Default number of Stripes
-	 */
-	public static final int DEFAULT_NUMBER_OF_STRIPES = 16;
 
 	/**
 	 * Returns a new {@link KeyLockManager} with default settings. The best available multi purpose implementation is
@@ -46,7 +42,7 @@ public final class KeyLockManagers {
 	 * @return the newly created lock
 	 */
 	public static KeyLockManager newLock() {
-		return new StripedKeyLockManager(DEFAULT_LOCK_TIMEOUT, TimeUnit.HOURS, DEFAULT_NUMBER_OF_STRIPES);
+		return new StripedKeyLockManager(DEFAULT_LOCK_TIMEOUT, TimeUnit.HOURS);
 	}
 
 	/**
@@ -61,25 +57,10 @@ public final class KeyLockManagers {
 	 * @return the newly created lock
 	 */
 	public static KeyLockManager newLock(final long lockTimeout, final TimeUnit lockTimeoutUnit) {
-		return new StripedKeyLockManager(lockTimeout, lockTimeoutUnit, DEFAULT_NUMBER_OF_STRIPES);
+		return new StripedKeyLockManager(lockTimeout, lockTimeoutUnit);
 	}
 
-	/**
-	 * Returns a new {@link KeyLockManager} with the given timeout settings. The best available multi purpose
-	 * implementation is used.
-	 *
-	 * @param lockTimeout
-	 *            the time to wait for a lock before a Exception is thrown - must be greater than 0
-	 * @param lockTimeoutUnit
-	 *            the unit for lockTimeout - must not be null
-	 * @param numberOfStripes
-	 *            the number of stripes used for locking
-	 *
-	 * @return the newly created lock
-	 */
-	public static KeyLockManager newLock(final long lockTimeout, final TimeUnit lockTimeoutUnit, final int numberOfStripes) {
-		return new StripedKeyLockManager(lockTimeout, lockTimeoutUnit, numberOfStripes);
-	}
+
 
 	/**
 	 * Prevent instantiation.
