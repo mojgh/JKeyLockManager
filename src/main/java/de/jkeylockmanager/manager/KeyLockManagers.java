@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Marc-Olaf Jaschke
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,12 +21,11 @@ import java.util.concurrent.TimeUnit;
 import de.jkeylockmanager.manager.implementation.lockstripe.StripedKeyLockManager;
 
 /**
- * 
- * This class contains factory methods to create new instances of
- * {@link KeyLockManager}.
- * 
+ *
+ * This class contains factory methods to create new instances of {@link KeyLockManager}.
+ *
  * @author Marc-Olaf Jaschke
- * 
+ *
  */
 public final class KeyLockManagers {
 
@@ -36,29 +35,50 @@ public final class KeyLockManagers {
 	public static final int DEFAULT_LOCK_TIMEOUT = 1; // 1 h
 
 	/**
-	 * Returns a new {@link KeyLockManager} with default settings. The best
-	 * available multi purpose implementation is used.
-	 * 
+	 * Default number of Stripes
+	 */
+	public static final int DEFAULT_NUMBER_OF_STRIPES = 16;
+
+	/**
+	 * Returns a new {@link KeyLockManager} with default settings. The best available multi purpose implementation is
+	 * used.
+	 *
 	 * @return the newly created lock
 	 */
 	public static KeyLockManager newLock() {
-		return new StripedKeyLockManager(DEFAULT_LOCK_TIMEOUT, TimeUnit.HOURS);
+		return new StripedKeyLockManager(DEFAULT_LOCK_TIMEOUT, TimeUnit.HOURS, DEFAULT_NUMBER_OF_STRIPES);
 	}
 
 	/**
-	 * Returns a new {@link KeyLockManager} with the given timeout settings. The
-	 * best available multi purpose implementation is used.
-	 * 
+	 * Returns a new {@link KeyLockManager} with the given timeout settings. The best available multi purpose
+	 * implementation is used.
+	 *
 	 * @param lockTimeout
-	 *            the time to wait for a lock before a Exception is thrown -
-	 *            must be greater than 0
+	 *            the time to wait for a lock before a Exception is thrown - must be greater than 0
 	 * @param lockTimeoutUnit
 	 *            the unit for lockTimeout - must not be null
-	 * 
+	 *
 	 * @return the newly created lock
 	 */
 	public static KeyLockManager newLock(final long lockTimeout, final TimeUnit lockTimeoutUnit) {
-		return new StripedKeyLockManager(lockTimeout, lockTimeoutUnit);
+		return new StripedKeyLockManager(lockTimeout, lockTimeoutUnit, DEFAULT_NUMBER_OF_STRIPES);
+	}
+
+	/**
+	 * Returns a new {@link KeyLockManager} with the given timeout settings. The best available multi purpose
+	 * implementation is used.
+	 *
+	 * @param lockTimeout
+	 *            the time to wait for a lock before a Exception is thrown - must be greater than 0
+	 * @param lockTimeoutUnit
+	 *            the unit for lockTimeout - must not be null
+	 * @param numberOfStripes
+	 *            the number of stripes used for locking
+	 *
+	 * @return the newly created lock
+	 */
+	public static KeyLockManager newLock(final long lockTimeout, final TimeUnit lockTimeoutUnit, final int numberOfStripes) {
+		return new StripedKeyLockManager(lockTimeout, lockTimeoutUnit, numberOfStripes);
 	}
 
 	/**
