@@ -78,18 +78,29 @@ Java 5, 6, 7
 
 Start with `KeyLockManagers` in order to get instances of KLM.
 
+
 ### Versions
 
-#### Version 2.0.0
+
+#### Version 2
+
+##### 2.1.0
+
+Make number of stripes configurable (Provided by https://github.com/jschmied)
+
+##### 2.0.0
 
 Use of Java 8
 
-#### Version 1.1.0
+
+#### Version 1
+
+##### Version 1.1.0
 
 Simplified exception handling.
 
 Execution exceptions inside of callbacks are no longer wrapped. Callbacks now have to wrap checked exceptions in unchecked exceptions.
 
-#### Version 1.0.1
+##### Version 1.0.1
 
 Transition to maven central
