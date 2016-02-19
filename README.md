@@ -1,6 +1,10 @@
 JKeyLockManager
 ===============
 
+master: [![Build 
+Status](https://travis-ci.org/mojgh/JKeyLockManager.svg?branch=master)](https://travis-ci.org/mojgh/JKeyLockManager) 
+v1.1: [![Build Status](https://travis-ci.org/mojgh/JKeyLockManager.svg?branch=1.1)](https://travis-ci.org/mojgh/JKeyLockManager)
+
 JKeyLockManager provides fine-grained locking with application specific keys.
 
 JKeyLockManager (KLM) provides fine-grained locking with application specific keys. All resource and exception handling for the active set of keys is encapsulated in the manager. Thereby it is easier to follow the recommendation of Robert C. Martin: **"Keep your concurrency-related code separate from other code."**
@@ -89,13 +93,3 @@ Execution exceptions inside of callbacks are no longer wrapped. Callbacks now ha
 #### Version 1.0.1
 
 Transition to maven central
-
-## Build Status
-
-Master
-
-[![Build Status](https://travis-ci.org/mojgh/JKeyLockManager.svg?branch=master)](https://travis-ci.org/mojgh/JKeyLockManager)
-
-1.1 Branch
-
-[![Build Status](https://travis-ci.org/mojgh/JKeyLockManager.svg?branch=1.1)](https://travis-ci.org/mojgh/JKeyLockManager)
