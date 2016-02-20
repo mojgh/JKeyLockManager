@@ -27,7 +27,7 @@ http://central.sonatype.org/pages/apache-maven.html
 
 ddd
 
-<img src="https://cdn.rawgit.com/mojgh/JKeyLockManager/master/doc/lock-chart.svg" width="48">
+<img src="https://cdn.rawgit.com/mojgh/JKeyLockManager/master/doc/lock-chart.svg" width="50%">
 
 yyyy
 
