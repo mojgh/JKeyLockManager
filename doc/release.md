@@ -22,13 +22,3 @@ http://repo1.maven.org/maven2/de/jkeylockmanager/jkeylockmanager/
 http://central.sonatype.org/pages/ossrh-guide.html
 http://central.sonatype.org/pages/apache-maven.html
 
-
-![](https://cdn.rawgit.com/mojgh/JKeyLockManager/master/doc/lock-chart.svg)
-
-ddd
-
-<img src="https://cdn.rawgit.com/mojgh/JKeyLockManager/master/doc/lock-chart.svg" width="50%">
-
-yyyy
-
-<img src="https://raw.githubusercontent.com/mojgh/JKeyLockManager/master/doc/lock-chart.svg" width="48">

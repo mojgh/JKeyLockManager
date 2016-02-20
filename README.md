@@ -14,7 +14,7 @@ The KLM takes over the maintenance of the locks and keys completely. It can mana
 
 ### Behavior with concurrency
 
-![](doc/lock-chart.png)
+<img src="https://cdn.rawgit.com/mojgh/JKeyLockManager/master/doc/lock-chart.svg" width="50%">
 
 If a thread executes a callback with a key **A**, a second thread can execute a callback with a key **B concurrently**. Another thread, which is trying to execute a callback with a key **A**, has to wait until the first thread leaves the callback.
 
