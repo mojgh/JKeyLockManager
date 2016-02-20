@@ -24,3 +24,6 @@ http://central.sonatype.org/pages/apache-maven.html
 
 
 ![](https://cdn.rawgit.com/mojgh/JKeyLockManager/master/doc/lock-chart.svg)
+
+
+<img src="https://raw.githubusercontent.com/mojgh/JKeyLockManager/master/doc/lock-chart.svg" width="48">
