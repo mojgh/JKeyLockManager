@@ -21,3 +21,6 @@ http://repo1.maven.org/maven2/de/jkeylockmanager/jkeylockmanager/
 # Documentation
 http://central.sonatype.org/pages/ossrh-guide.html
 http://central.sonatype.org/pages/apache-maven.html
+
+
+![](https://cdn.rawgit.com/mojgh/JKeyLockManager/master/doc/lock-chart.svg)
