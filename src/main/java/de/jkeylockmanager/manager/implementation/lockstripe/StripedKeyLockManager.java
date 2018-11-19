@@ -139,21 +139,27 @@ public final class StripedKeyLockManager implements KeyLockManager {
 
 	private CountingLock getKeyLock(final Object key) {
 		assert key != null : "contract broken: key != null";
-		getStripedLock(key).tryLock();
-		try {
-			final CountingLock result;
-			final CountingLock previousLock = key2lock.get(key);
-			if (previousLock == null) {
-				result = new CountingLock(lockTimeout, lockTimeoutUnit);
-				key2lock.put(key, result);
-			} else {
-				result = previousLock;
+
+		final CountingLock result;
+		final CountingLock previousLock = key2lock.get(key);
+		if (previousLock == null) {
+			getStripedLock(key).tryLock();
+			CountingLock lock = key2lock.get(key);
+			try {
+				if (lock == null) {
+					result = new CountingLock(lockTimeout, lockTimeoutUnit);
+					key2lock.put(key, result);
+				} else {
+					result = lock;
+				}
+			} finally {
+				getStripedLock(key).unlock();
 			}
-			result.incrementUses();
-			return result;
-		} finally {
-			getStripedLock(key).unlock();
+		} else {
+			result = previousLock;
 		}
+		result.incrementUses();
+		return result;	
 	}
 
 	private CountingLock getStripedLock(final Object key) {
