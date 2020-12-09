@@ -109,6 +109,7 @@ final class CountingLock {
 				throw new KeyLockManagerTimeoutException(lockTimeout, lockTimeoutUnit);
 			}
 		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
 			throw new KeyLockManagerInterruptedException();
 		}
 	}
